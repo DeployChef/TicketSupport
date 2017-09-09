@@ -1,0 +1,108 @@
+﻿<Window xmlns:Views="clr-namespace:TicketSupport.Views"  x:Class="TicketSupport.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TicketSupport"
+        xmlns:viewModels="clr-namespace:TicketSupport.ViewModels"
+        xmlns:controls="clr-namespace:TicketSupport.Controls"
+        mc:Ignorable="d"
+        Title="TicketSupport" Height="600" Width="800" MinWidth="700" MinHeight="400" WindowStartupLocation="CenterScreen"
+         d:DataContext="{d:DesignInstance viewModels:MainViewModel}">
+    
+    <Window.Resources>
+        <ResourceDictionary Source="../Controls/BusyIndicatorTemplate.xaml"></ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid Background="#FF51666A">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Margin="5,10,0,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="#FFC7C7C7">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="{Binding SupportInfo.Token}" FontWeight="Bold"/>
+                    <Label Content="{Binding SupportInfo.Login}" FontFamily="Sitka Text"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0"/>
+                <Button Grid.Column="1" Content="search"/>
+            </Grid>
+            <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer.Resources>
+                    <CollectionViewSource x:Key="Tickets" Source="{Binding Tickets}">
+                        <CollectionViewSource.GroupDescriptions>
+                            <PropertyGroupDescription PropertyName="Category" />
+                        </CollectionViewSource.GroupDescriptions>
+                    </CollectionViewSource>
+                </ScrollViewer.Resources>
+                <ListView ItemsSource="{Binding Source={StaticResource Tickets}}"
+                          SelectedItem="{Binding SelectedTicket}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Name: " />
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="22" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </ScrollViewer>
+            <controls:BusyIndicator Grid.Row="4" IsBusy="{Binding IsBusy}"/>
+        </Grid>
+        <Grid Grid.Column="2" Background="#FF51666A">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="150"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="0,10,5,0" Background="White">
+                <TextBlock Text="{Binding MessageText}"/>
+             
+            </ScrollViewer>
+            <Rectangle Grid.Row ="1" Fill="#FF51666A"></Rectangle>
+            <Grid Grid.Row="2" Background="#FFA9D9F0" Margin="0,0,5,5">
+                <TextBox Margin="10,10,84,10"></TextBox>
+                <Button Margin="0,48,10,43" Content="Send" HorizontalAlignment="Right" Width="60"></Button>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

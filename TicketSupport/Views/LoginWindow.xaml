@@ -1,0 +1,19 @@
+﻿<Window x:Class="TicketSupport.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TicketSupport.Views"
+        xmlns:viewmodels="clr-namespace:TicketSupport.ViewModels"
+        mc:Ignorable="d"
+        Title="Авторизация" Height="166.279" Width="387.024" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance viewmodels:LoginViewModel}">
+    <Grid>
+        <StackPanel Margin="10">
+            <Label  Margin="0,0,0,0" Content="{Binding Status}" HorizontalContentAlignment="Center"/>
+            <Label  Margin="10,0,10,0" Content="Введите токен" HorizontalContentAlignment="Center"/>
+            <TextBox  Text="{Binding SupportToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" Margin="10,0,10,10" x:Name="textBox"  TextWrapping="Wrap" />
+            <Button Command="{Binding EnterCommand}" Margin="15,0,15,0" x:Name="button" Content="Вход" />
+        </StackPanel>
+    </Grid>
+</Window>
