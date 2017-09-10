@@ -74,13 +74,15 @@
     </Compile>
     <Compile Include="Controls\BusyIndicator.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Models\Author.cs" />
+    <Compile Include="Models\StatusEnum.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\PriorityEnum.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\SupportInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Records\SupportRecord.cs" />
-    <Compile Include="Records\TiketRecord.cs" />
+    <Compile Include="Records\TicketsRecord.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="TicketParcer.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
