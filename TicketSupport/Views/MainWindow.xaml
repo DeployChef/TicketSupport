@@ -39,18 +39,18 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="40"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0"/>
-                <Button Grid.Column="1" Content="search"/>
+                <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="0"/>
+                <Button Grid.Column="1" Command="{Binding ClearSearchTextCommand}" Content="clear" FontSize="9" FontWeight="Bold" Foreground="Black"/>
             </Grid>
             <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
                 <ScrollViewer.Resources>
-                    <CollectionViewSource x:Key="Tickets" Source="{Binding Tickets}">
+                    <CollectionViewSource x:Key="FiltredTickets" Source="{Binding FiltredTickets}">
                         <CollectionViewSource.GroupDescriptions>
                             <PropertyGroupDescription PropertyName="Category" />
                         </CollectionViewSource.GroupDescriptions>
                     </CollectionViewSource>
                 </ScrollViewer.Resources>
-                <ListView ItemsSource="{Binding Source={StaticResource Tickets}}"
+                <ListView ItemsSource="{Binding Source={StaticResource FiltredTickets}}"
                           SelectedItem="{Binding SelectedTicket}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -95,11 +95,12 @@
             </Grid.RowDefinitions>
             <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="0,10,5,0" Background="White">
                 <TextBlock Text="{Binding MessageText}" TextWrapping="Wrap"/>
-             
             </ScrollViewer>
             <Rectangle Grid.Row ="1" Fill="#FF51666A"></Rectangle>
             <Grid Grid.Row="2" Background="#FFA9D9F0" Margin="0,0,5,5">
-                <TextBox Margin="10,10,84,10"></TextBox>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10,10,84,10" Background="White">
+                <TextBlock Text="213123" TextWrapping="Wrap" Padding="5" LineHeight="6"/>
+                </ScrollViewer>
                 <Button Margin="0,48,10,43" Content="Send" HorizontalAlignment="Right" Width="60"></Button>
             </Grid>
         </Grid>
