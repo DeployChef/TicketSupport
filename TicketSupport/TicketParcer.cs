@@ -33,7 +33,7 @@ namespace TicketSupport
             {
                 //HIODSgue32QjM89tltHk
                 var doc = GetXmlFromUrl(AUTH_URL, supportToken); 
-                SupportInfo supInfo = new SupportInfo(supportToken);
+                var supInfo = new SupportInfo(supportToken);
 
                 var serializer = new DataContractSerializer(typeof(SupportRecord));
 
@@ -41,38 +41,7 @@ namespace TicketSupport
                 using (var reader = XmlReader.Create(strReader))
                 {
                     var record = (SupportRecord)serializer.ReadObject(reader);
-                }
-
-
-
-                foreach (XmlNode node in doc.SelectNodes("user"))
-                {
-                    foreach (XmlNode child in node.ChildNodes)
-                    {
-                        if (child.Name == "user_id")
-                            supInfo.UserId = Convert.ToInt32(child.InnerText);
-                        if (child.Name == "login")
-                            supInfo.Login = child.InnerText;
-                        if (child.Name == "email")
-                            supInfo.Email = child.InnerText;
-                    }
-                    foreach (XmlNode child in node.SelectNodes("categories"))
-                    {
-                        foreach (XmlNode category in child.ChildNodes)
-                        {
-                            int? id = null;
-                            var title = string.Empty;
-                            foreach (XmlNode categoryFirld in category.ChildNodes)
-                            {     
-                                if (categoryFirld.Name == "id")
-                                    id = Convert.ToInt32(categoryFirld.InnerText);
-                                if (categoryFirld.Name == "title")
-                                    title = categoryFirld.InnerText;
-                            }
-                            if (id != null)
-                                supInfo.Categories.Add(id.Value, title);
-                        }
-                    }
+                    supInfo.SetRecord(record);
                 }
                 token.ThrowIfCancellationRequested();
                 return supInfo.UserId == null ? null : supInfo;
@@ -87,52 +56,39 @@ namespace TicketSupport
 
         public static List<Ticket> GetTikets(String supportToken)
         {
-            try
-            {
+            //try
+            //{
                 var doc = GetXmlFromUrl(GET_TICKETS_URL, supportToken);
-                foreach (XmlNode node in doc.SelectNodes("user"))
+                var serializer = new DataContractSerializer(typeof(TicketsRecord));
+                TicketsRecord record;
+                using (var strReader = new StringReader(doc.InnerXml))
+                using (var reader = XmlReader.Create(strReader))
                 {
-                    foreach (XmlNode child in node.ChildNodes)
-                    {
-                        if (child.Name == "user_id")
-                            supInfo.UserId = Convert.ToInt32(child.InnerText);
-                        if (child.Name == "login")
-                            supInfo.Login = child.InnerText;
-                        if (child.Name == "email")
-                            supInfo.Email = child.InnerText;
-                    }
-                    foreach (XmlNode child in node.SelectNodes("categories"))
-                    {
-                        foreach (XmlNode category in child.ChildNodes)
-                        {
-                            int? id = null;
-                            var title = string.Empty;
-                            foreach (XmlNode categoryFirld in category.ChildNodes)
-                            {
-                                if (categoryFirld.Name == "id")
-                                    id = Convert.ToInt32(categoryFirld.InnerText);
-                                if (categoryFirld.Name == "title")
-                                    title = categoryFirld.InnerText;
-                            }
-                            if (id != null)
-                                supInfo.Categories.Add(id.Value, title);
-                        }
-                    }
+                    record = (TicketsRecord)serializer.ReadObject(reader);
                 }
-                return null;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show($"Не удалось, причина [{e.Message}]");
-                return null;
-            }
+                if (record == null) return null;
+
+                var tickets = new List<Ticket>();
+                foreach (var ticketsRecord in record)
+                {
+                    tickets.Add(new Ticket(ticketsRecord));
+                }
+                return tickets;
+                
+               
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show($"Не удалось, причина [{e.Message}]");
+            //    return null;
+            //}
         }
 
         private static XmlDocument GetXmlFromUrl(string url, string token)
         {
             XmlDocument xdoc = new XmlDocument();
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Headers.Add("Cookie", "ANTIDDOS=2d36534375e3a66621432173a0dccc0f");
+            //request.Headers.Add("Cookie", "ANTIDDOS=2d36534375e3a66621432173a0dccc0f");
             request.Headers.Add("token", token);
 
             request.Method = "GET";

@@ -46,7 +46,7 @@
                 <ScrollViewer.Resources>
                     <CollectionViewSource x:Key="Tickets" Source="{Binding Tickets}">
                         <CollectionViewSource.GroupDescriptions>
-                            <PropertyGroupDescription PropertyName="Category" />
+                            <PropertyGroupDescription PropertyName="CategoryId" />
                         </CollectionViewSource.GroupDescriptions>
                     </CollectionViewSource>
                 </ScrollViewer.Resources>

@@ -50,7 +50,7 @@ namespace TicketSupport.ViewModels
                 if (!SelectedTicket.Messages.Any())
                     return " Сообщений нет";
                 
-                return String.Join(" ", SelectedTicket.Messages.ToArray()); ;
+                return String.Join(" ", SelectedTicket.Messages.Select(c=>c.Text).ToArray()); ;
             }
         }
 
