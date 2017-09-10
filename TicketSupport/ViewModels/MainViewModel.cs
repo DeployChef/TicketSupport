@@ -88,9 +88,9 @@ namespace TicketSupport.ViewModels
             var textBuilder = new StringBuilder();
             foreach (var message in SelectedTicket.Messages)
             {
-                var authorName = message.AuthorId == SelectedTicket.Author.UserId ? SelectedTicket.Author.Login : SupportInfo.Login;
+               
                 textBuilder.Append(message.DateStr.ToShortTimeString() + " | ");
-                textBuilder.Append(authorName + " : ");
+                textBuilder.Append(message.AuthorName + " : ");
                 textBuilder.Append(message.Text);
                 textBuilder.Append(Environment.NewLine);
                 textBuilder.Append(Environment.NewLine);
@@ -107,7 +107,7 @@ namespace TicketSupport.ViewModels
         private void ParceTiket()
         {
             IsBusy = true;
-            var tikets = TicketParcer.GetTikets(SupportInfo.Token);
+            var tikets = TicketParcer.GetTikets(SupportInfo);
             if (tikets == null)
             {
                 Status = "Не удалось получить тикеты";
