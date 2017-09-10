@@ -72,6 +72,7 @@ namespace TicketSupport.ViewModels
             else
             {
                 Tickets = new ObservableCollection<Ticket>(tikets);
+                RaisePropertyChanged(()=>Tickets);
                 Status = "Данные успешно получены";
                 IsBusy = false;
             }
