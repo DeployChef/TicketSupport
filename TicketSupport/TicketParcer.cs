@@ -53,11 +53,11 @@ namespace TicketSupport
             
         }
 
-        public static List<Ticket> GetTikets(string supportToken)
+        public static List<Ticket> GetTikets(SupportInfo supInfo)
         {
             try
             {
-                var doc = GetXmlFromUrl(GET_TICKETS_URL, supportToken);
+                var doc = GetXmlFromUrl(GET_TICKETS_URL, supInfo.Token);
                 var serializer = new DataContractSerializer(typeof(TicketsRecord));
                 TicketsRecord record;
                 using (var strReader = new StringReader(doc.InnerXml))
@@ -65,7 +65,7 @@ namespace TicketSupport
                 {
                     record = (TicketsRecord)serializer.ReadObject(reader);
                 }
-                return record?.Select(ticketsRecord => new Ticket(ticketsRecord)).ToList();
+                return record?.Select(ticketsRecord => new Ticket(ticketsRecord, supInfo)).ToList();
             }
             catch (Exception e)
             {
