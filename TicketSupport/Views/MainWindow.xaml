@@ -46,7 +46,7 @@
                 <ScrollViewer.Resources>
                     <CollectionViewSource x:Key="Tickets" Source="{Binding Tickets}">
                         <CollectionViewSource.GroupDescriptions>
-                            <PropertyGroupDescription PropertyName="CategoryId" />
+                            <PropertyGroupDescription PropertyName="Category" />
                         </CollectionViewSource.GroupDescriptions>
                     </CollectionViewSource>
                 </ScrollViewer.Resources>
@@ -69,9 +69,9 @@
                                                 <Expander IsExpanded="True">
                                                     <Expander.Header>
                                                         <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="22" VerticalAlignment="Bottom" />
-                                                            <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />
-                                                            <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="14" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text="{Binding ItemCount}" FontSize="14" Foreground="Black" FontWeight="Bold" FontStyle="Italic" Margin="5,0,0,0" VerticalAlignment="Bottom" />
+                                                            <TextBlock Text=" шт." FontSize="11" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />
                                                         </StackPanel>
                                                     </Expander.Header>
                                                     <ItemsPresenter />
@@ -94,7 +94,7 @@
                 <RowDefinition Height="150"/>
             </Grid.RowDefinitions>
             <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="0,10,5,0" Background="White">
-                <TextBlock Text="{Binding MessageText}"/>
+                <TextBlock Text="{Binding MessageText}" TextWrapping="Wrap"/>
              
             </ScrollViewer>
             <Rectangle Grid.Row ="1" Fill="#FF51666A"></Rectangle>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using TicketSupport.Models;
@@ -14,6 +15,7 @@ namespace TicketSupport.ViewModels
     {
         private Ticket _selectedTicket;
         private string _status;
+        
         public ObservableCollection<Ticket> Tickets { get; set; }
         public SupportInfo SupportInfo { get; }
 
@@ -49,9 +51,24 @@ namespace TicketSupport.ViewModels
                     return " Ничего не выбрано";
                 if (!SelectedTicket.Messages.Any())
                     return " Сообщений нет";
-                
-                return String.Join(" ", SelectedTicket.Messages.Select(c=>c.Text).ToArray()); ;
+
+                return CreateMessagesText();
             }
+        }
+
+        private string CreateMessagesText()
+        {
+            var textBuilder = new StringBuilder();
+            foreach (var message in SelectedTicket.Messages)
+            {
+                var authorName = message.AuthorId == SelectedTicket.Author.UserId ? SelectedTicket.Author.Login : SupportInfo.Login;
+                textBuilder.Append(message.DateStr.ToShortTimeString() + " | ");
+                textBuilder.Append(authorName + " : ");
+                textBuilder.Append(message.Text);
+                textBuilder.Append(Environment.NewLine);
+                textBuilder.Append(Environment.NewLine);
+            }
+            return textBuilder.ToString();
         }
 
         public MainViewModel(SupportInfo supInfo)

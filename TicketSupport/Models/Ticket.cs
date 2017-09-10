@@ -23,7 +23,7 @@ namespace TicketSupport.Models
         public string CharName { get; set; }
         public string Title { get; set; }
         public List<Message> Messages { get; set; } = new List<Message>();
-        public int CategoryId { get; set; }
+        public string Category { get; set; }
 
         public Ticket(TicketRecord ticketsRecord)
         {
@@ -35,7 +35,7 @@ namespace TicketSupport.Models
             UpdateDate = Convert.ToDateTime(ticketsRecord.UpdateDate);
             CharName = ticketsRecord.CharName;
             Title = ticketsRecord.Title;
-            CategoryId = ticketsRecord.CategoryId;
+            Category = ticketsRecord.Category.Title;
             foreach (var messageRecord in ticketsRecord.Answers)
             {
                 Messages.Add(new Message(messageRecord));
