@@ -85,7 +85,6 @@
                     </ListView.GroupStyle>
                 </ListView>
             </ScrollViewer>
-            <controls:BusyIndicator Grid.Row="4" IsBusy="{Binding IsBusy}"/>
         </Grid>
         <Grid Grid.Column="2" Background="#FF51666A">
             <Grid.RowDefinitions>
@@ -99,10 +98,11 @@
             <Rectangle Grid.Row ="1" Fill="#FF51666A"></Rectangle>
             <Grid Grid.Row="2" Background="#FFA9D9F0" Margin="0,0,5,5">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10,10,84,10" Background="White">
-                <TextBlock Text="213123" TextWrapping="Wrap" Padding="5" LineHeight="6"/>
+                    <TextBox Text="213123" TextWrapping="Wrap" Padding="5"/>
                 </ScrollViewer>
                 <Button Margin="0,48,10,43" Content="Send" HorizontalAlignment="Right" Width="60"></Button>
             </Grid>
         </Grid>
+        <controls:BusyIndicator Grid.ColumnSpan="3" Grid.Column="0" IsBusy="{Binding IsBusy}"/>
     </Grid>
 </Window>
