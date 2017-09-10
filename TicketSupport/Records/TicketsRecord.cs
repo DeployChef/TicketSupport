@@ -86,7 +86,7 @@ namespace TicketSupport.Records
     public class AuthorRecord
     {
         [DataMember(Name = "user_id", IsRequired = true, Order = 0)]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         [DataMember(Name = "login", IsRequired = true, Order = 1)]
         public string Login { get; set; }

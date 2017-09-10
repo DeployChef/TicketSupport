@@ -9,7 +9,6 @@ namespace TicketSupport.Models
 {
     public class Message
     {
-        
         public Message(AnswerRecord messageRecord)
         {
             Text = messageRecord.Text;

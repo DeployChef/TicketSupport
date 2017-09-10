@@ -17,7 +17,7 @@ namespace TicketSupport.Models
             Email = author.Email;
         }
 
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         public string Login { get; set; }
 
