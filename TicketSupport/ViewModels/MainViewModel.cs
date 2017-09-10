@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using TicketSupport.Models;
@@ -13,9 +14,11 @@ namespace TicketSupport.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+
         private Ticket _selectedTicket;
         private string _status;
         private string _searchText;
+        private List<KeyValuePair<int, DateTime>> ticketsIdsAndUpdateDates = new List<KeyValuePair<int, DateTime>>();
 
         public ObservableCollection<Ticket> Tickets { get; set; } = new ObservableCollection<Ticket>();
         public SupportInfo SupportInfo { get; }
@@ -101,7 +104,18 @@ namespace TicketSupport.ViewModels
         public MainViewModel(SupportInfo supInfo)
         {
             SupportInfo = supInfo;
-            Task.Factory.StartNew(ParceTiket);
+            //Task.Factory.StartNew(ParceTiket);
+            Timer t = new Timer(o => {
+                ParceTiket();
+            }, null, 0, 10000);
+        }
+
+        private void LoadTickets(List<Ticket> tikets)
+        {
+            Tickets = new ObservableCollection<Ticket>(tikets);
+            RaisePropertyChanged(() => FiltredTickets);
+            Status = "Данные успешно получены";
+            IsBusy = false;
         }
 
         private void ParceTiket()
@@ -113,14 +127,20 @@ namespace TicketSupport.ViewModels
                 Status = "Не удалось получить тикеты";
                 IsBusy = false;
             }
-            else
-            {
-                Tickets = new ObservableCollection<Ticket>(tikets);
-                RaisePropertyChanged(()=>FiltredTickets);
-                Status = "Данные успешно получены";
-                IsBusy = false;
-            }
 
+            if (ticketsIdsAndUpdateDates.Count == 0)
+                LoadTickets(tikets);
+
+            foreach (var ticket in tikets)
+            {
+                KeyValuePair<int, DateTime> keyValueTicketIdDateTime = ticketsIdsAndUpdateDates.SingleOrDefault(x => x.Key == ticket.Id);
+                if (keyValueTicketIdDateTime.IsDefault())
+                    ticketsIdsAndUpdateDates.Add(new KeyValuePair<int, DateTime>(ticket.Id, ticket.UpdateDate));
+                if (keyValueTicketIdDateTime.Value < ticket.UpdateDate)
+                    LoadTickets(tikets);
+            }
+            Status = "Обновлений нет.";
         }
+
     }
 }
