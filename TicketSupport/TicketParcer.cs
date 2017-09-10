@@ -31,7 +31,6 @@ namespace TicketSupport
         {
             try
             {
-                //HIODSgue32QjM89tltHk
                 var doc = GetXmlFromUrl(AUTH_URL, supportToken); 
                 var supInfo = new SupportInfo(supportToken);
 
@@ -54,10 +53,10 @@ namespace TicketSupport
             
         }
 
-        public static List<Ticket> GetTikets(String supportToken)
+        public static List<Ticket> GetTikets(string supportToken)
         {
-            //try
-            //{
+            try
+            {
                 var doc = GetXmlFromUrl(GET_TICKETS_URL, supportToken);
                 var serializer = new DataContractSerializer(typeof(TicketsRecord));
                 TicketsRecord record;
@@ -66,35 +65,26 @@ namespace TicketSupport
                 {
                     record = (TicketsRecord)serializer.ReadObject(reader);
                 }
-                if (record == null) return null;
-
-                var tickets = new List<Ticket>();
-                foreach (var ticketsRecord in record)
-                {
-                    tickets.Add(new Ticket(ticketsRecord));
-                }
-                return tickets;
-                
-               
-            //}
-            //catch (Exception e)
-            //{
-            //    MessageBox.Show($"Не удалось, причина [{e.Message}]");
-            //    return null;
-            //}
+                return record?.Select(ticketsRecord => new Ticket(ticketsRecord)).ToList();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Не удалось, причина [{e.Message}]");
+                return null;
+            }
         }
 
         private static XmlDocument GetXmlFromUrl(string url, string token)
         {
-            XmlDocument xdoc = new XmlDocument();
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            //request.Headers.Add("Cookie", "ANTIDDOS=2d36534375e3a66621432173a0dccc0f");
+            var xdoc = new XmlDocument();
+            var request = (HttpWebRequest)WebRequest.Create(url);
+           
             request.Headers.Add("token", token);
 
             request.Method = "GET";
             request.Accept = "application/json";
 
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (var response = (HttpWebResponse)request.GetResponse())
             {
                 xdoc.Load(response.GetResponseStream());
             }

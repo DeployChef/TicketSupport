@@ -55,8 +55,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Name: " />
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Title}" FontWeight="Bold" />
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
