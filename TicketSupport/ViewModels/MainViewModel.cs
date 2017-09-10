@@ -15,8 +15,9 @@ namespace TicketSupport.ViewModels
     {
         private Ticket _selectedTicket;
         private string _status;
-        
-        public ObservableCollection<Ticket> Tickets { get; set; }
+        private string _searchText;
+
+        public ObservableCollection<Ticket> Tickets { get; set; } = new ObservableCollection<Ticket>();
         public SupportInfo SupportInfo { get; }
 
         public Ticket SelectedTicket
@@ -56,6 +57,32 @@ namespace TicketSupport.ViewModels
             }
         }
 
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                _searchText = value;
+                RaisePropertyChanged(() => SearchText);
+                RaisePropertyChanged(()=> FiltredTickets);
+            }
+        }
+
+        public List<Ticket> FiltredTickets
+        {
+            get
+            {
+                return SearchText.IsNullOrEmpty() ? Tickets.ToList() : Tickets.Where(c => c.Title.Contains(SearchText)).ToList();
+            }
+        }
+
+        public RelayCommand ClearSearchTextCommand => new RelayCommand(ClearSearchText);
+
+        private void ClearSearchText(object obj)
+        {
+            SearchText = string.Empty;
+        }
+
         private string CreateMessagesText()
         {
             var textBuilder = new StringBuilder();
@@ -89,7 +116,7 @@ namespace TicketSupport.ViewModels
             else
             {
                 Tickets = new ObservableCollection<Ticket>(tikets);
-                RaisePropertyChanged(()=>Tickets);
+                RaisePropertyChanged(()=>FiltredTickets);
                 Status = "Данные успешно получены";
                 IsBusy = false;
             }
