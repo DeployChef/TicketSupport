@@ -13,7 +13,5 @@ namespace TicketSupport
         {
             return string.IsNullOrEmpty(text);
         }
-
-       
     }
 }
