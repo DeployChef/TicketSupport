@@ -104,7 +104,6 @@ namespace TicketSupport.ViewModels
         public MainViewModel(SupportInfo supInfo)
         {
             SupportInfo = supInfo;
-            //Task.Factory.StartNew(ParceTiket);
             Timer t = new Timer(o => {
                 ParceTiket();
             }, null, 0, 10000);
@@ -118,6 +117,16 @@ namespace TicketSupport.ViewModels
             IsBusy = false;
         }
 
+        private void keyValueTicketsAddAll(List<Ticket> tikets)
+        {
+            foreach (var ticket in tikets)
+            {
+                ticketsIdsAndUpdateDates.Add(new KeyValuePair<int, DateTime>(ticket.Id, ticket.UpdateDate));
+
+            }
+        }
+
+
         private void ParceTiket()
         {
             IsBusy = true;
@@ -129,7 +138,12 @@ namespace TicketSupport.ViewModels
             }
 
             if (ticketsIdsAndUpdateDates.Count == 0)
+            {
                 LoadTickets(tikets);
+                keyValueTicketsAddAll(tikets);
+                return;
+            }
+                
 
             foreach (var ticket in tikets)
             {
@@ -137,7 +151,10 @@ namespace TicketSupport.ViewModels
                 if (keyValueTicketIdDateTime.IsDefault())
                     ticketsIdsAndUpdateDates.Add(new KeyValuePair<int, DateTime>(ticket.Id, ticket.UpdateDate));
                 if (keyValueTicketIdDateTime.Value < ticket.UpdateDate)
+                {
                     LoadTickets(tikets);
+                    return;
+                }
             }
             Status = "Обновлений нет.";
         }
