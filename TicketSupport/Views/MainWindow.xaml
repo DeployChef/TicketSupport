@@ -101,11 +101,10 @@
                     </StackPanel>
                 </StackPanel>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
-                    <ListView  ItemsSource="{Binding SelectedTicket.Messages}" ItemTemplateSelector="{StaticResource ChatSelector}" Padding="3" IsHitTestVisible="True">
+                    <ListView  ItemsSource="{Binding SelectedTicket.Messages}" ItemTemplateSelector="{StaticResource ChatSelector}" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" IsHitTestVisible="True">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                 <Setter Property="Focusable" Value="false"/>
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">

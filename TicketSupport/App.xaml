@@ -10,7 +10,7 @@
             <Grid Margin="0,3,0,0">
                 <StackPanel>
                     <StackPanel Background="#FF2D2D30">
-                        <TextBox BorderThickness="0" IsReadOnly="True" Background="Aqua" FontSize="14"  Foreground="Azure" MinWidth="100" Text="{Binding Text}" TextWrapping="WrapWithOverflow"  Margin="5"/>
+                        <TextBox BorderThickness="0" IsReadOnly="True" Background="Transparent" FontSize="14"  Foreground="Azure" MinWidth="100" Text="{Binding Text}" TextWrapping="Wrap" AcceptsReturn="True"  Margin="5"/>
                         <TextBlock Foreground="Silver" HorizontalAlignment="Right" FontSize="8" Text="{Binding Time}" Margin="0,-5,3,0"/>
                     </StackPanel>
                     <Path x:Name="DownRightTri"
@@ -30,7 +30,7 @@
               Fill="#FF2D2D30"
               Data="M0,-5 V5 H10 " />
                     <StackPanel Background="#FF2D2D30">
-                        <TextBox BorderThickness="0" IsReadOnly="True" Background="Aqua" FontSize="14"  Foreground="Azure" MinWidth="100" Text="{Binding Text}" TextWrapping="WrapWithOverflow"  Margin="5"/>
+                        <TextBox BorderThickness="0" IsReadOnly="True" Background="Transparent" FontSize="14"  Foreground="Azure" MinWidth="100" Text="{Binding Text}" TextWrapping="Wrap" AcceptsReturn="True"  Margin="5"/>
                         <TextBlock Foreground="Silver" HorizontalAlignment="Right" FontSize="8" Text="{Binding Time}" Margin="0,-5,3,0"/>
                     </StackPanel>
                 </StackPanel>
