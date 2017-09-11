@@ -27,7 +27,6 @@ namespace TicketSupport.ViewModels
             {
                 _selectedTicket = value;
                 RaisePropertyChanged(() => SelectedTicket);
-                RaisePropertyChanged(() => MessageText);
             }
         }
 
@@ -44,18 +43,6 @@ namespace TicketSupport.ViewModels
             }
         }
 
-        public string MessageText
-        {
-            get
-            {
-                if (SelectedTicket == null)
-                    return " Ничего не выбрано";
-                if (!SelectedTicket.Messages.Any())
-                    return " Сообщений нет";
-
-                return CreateMessagesText();
-            }
-        }
 
         public string SearchText
         {
@@ -81,21 +68,6 @@ namespace TicketSupport.ViewModels
         private void ClearSearchText(object obj)
         {
             SearchText = string.Empty;
-        }
-
-        private string CreateMessagesText()
-        {
-            var textBuilder = new StringBuilder();
-            foreach (var message in SelectedTicket.Messages)
-            {
-               
-                textBuilder.Append(message.DateStr.ToShortTimeString() + " | ");
-                textBuilder.Append(message.AuthorName + " : ");
-                textBuilder.Append(message.Text);
-                textBuilder.Append(Environment.NewLine);
-                textBuilder.Append(Environment.NewLine);
-            }
-            return textBuilder.ToString();
         }
 
         public MainViewModel(SupportInfo supInfo)

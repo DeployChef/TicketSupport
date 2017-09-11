@@ -5,14 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TicketSupport.Views"
         xmlns:viewmodels="clr-namespace:TicketSupport.ViewModels"
+        xmlns:ticketSupport="clr-namespace:TicketSupport"
         mc:Ignorable="d"
         Title="Авторизация" Height="166.279" Width="387.024" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
         d:DataContext="{d:DesignInstance viewmodels:LoginViewModel}">
+    <Window.Resources>
+        <ticketSupport:InvertBoolConverter x:Key="invertBoolConverter"/>
+    </Window.Resources>
     <Grid>
         <StackPanel Margin="10">
             <Label  Margin="0,0,0,0" Content="{Binding Status}" HorizontalContentAlignment="Center"/>
             <Label  Margin="10,0,10,0" Content="Введите токен" HorizontalContentAlignment="Center"/>
-            <TextBox  Text="{Binding SupportToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" Margin="10,0,10,10" x:Name="textBox"  TextWrapping="Wrap" />
+            <TextBox  Text="{Binding SupportToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBoolConverter}}"  HorizontalContentAlignment="Center" Margin="10,0,10,10" x:Name="textBox"  TextWrapping="Wrap" />
             <Button Command="{Binding EnterCommand}" Margin="15,0,15,0" x:Name="button" Content="Вход" />
         </StackPanel>
     </Grid>

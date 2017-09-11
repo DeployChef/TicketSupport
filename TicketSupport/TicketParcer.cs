@@ -65,7 +65,7 @@ namespace TicketSupport
                 {
                     record = (TicketsRecord)serializer.ReadObject(reader);
                 }
-                return record?.Select(ticketsRecord => new Ticket(ticketsRecord, supInfo)).ToList();
+                return record?.Select(ticketsRecord => new Ticket(ticketsRecord)).ToList();
             }
             catch (Exception e)
             {

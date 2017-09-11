@@ -40,7 +40,7 @@ namespace TicketSupport.ViewModels
 
         public LoginViewModel()
         {
-            EnterCommand = new RelayCommand(Login, can => !SupportToken.IsNullOrEmpty());
+            EnterCommand = new RelayCommand(Login, can => !SupportToken.IsNullOrEmpty() && !IsBusy);
             SupportToken = "new-token";
             Login(null);
         }
@@ -48,6 +48,7 @@ namespace TicketSupport.ViewModels
         public async void Login(object obj)
         {
             Status = "Подключаемся";
+            IsBusy = true;
             _cts?.Cancel(true);
             _cts = new CancellationTokenSource();
             var token = _cts.Token;
@@ -55,6 +56,7 @@ namespace TicketSupport.ViewModels
             await loginTask;
             if (!token.IsCancellationRequested && loginTask.Result != null)
             {
+
                 Status = "Успешно";
                 OnLoginSuccess(loginTask.Result);
                 CloseAction();
@@ -64,7 +66,7 @@ namespace TicketSupport.ViewModels
             {
                 Status = "Нет доступа";
             }
-
+            IsBusy = false;
             _cts = null;
         }
 
