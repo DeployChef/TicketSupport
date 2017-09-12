@@ -101,7 +101,14 @@
                     </StackPanel>
                 </StackPanel>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
-                    <ListView  ItemsSource="{Binding SelectedTicket.Messages}" ItemTemplateSelector="{StaticResource ChatSelector}" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" IsHitTestVisible="True">
+                    <ScrollViewer.Resources>
+                        <CollectionViewSource x:Key="Messages" Source="{Binding SelectedTicket.Messages}">
+                            <CollectionViewSource.GroupDescriptions>
+                                <PropertyGroupDescription PropertyName="Date" />
+                            </CollectionViewSource.GroupDescriptions>
+                        </CollectionViewSource>
+                    </ScrollViewer.Resources>
+                    <ListView  ItemsSource="{Binding Source={StaticResource Messages}}" ItemTemplateSelector="{StaticResource ChatSelector}" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Disabled" IsHitTestVisible="True">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -115,6 +122,24 @@
                                 </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
+                        <ListView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="10" HorizontalAlignment="Center" />
+                                                        <ItemsPresenter />
+                                                    </StackPanel>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
                     </ListView>
                 </ScrollViewer>
             </DockPanel>
