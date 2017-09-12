@@ -9,15 +9,19 @@ namespace TicketSupport.Models
 {
     public class Message
     {
-        public Message(AnswerRecord messageRecord, string authorName)
+        public Message(AnswerRecord messageRecord, bool isUser)
         {
             Text = messageRecord.Text;
-            AuthorName = authorName;
+            IsUser = isUser;
             DateStr = Convert.ToDateTime(messageRecord.DateStr);
         }
 
         public string Text { get; set; }
         public DateTime DateStr { get; set; }
-        public string AuthorName { get; set; }
+        public bool IsUser { get; set; }
+
+        public string Time => DateStr.ToShortTimeString();
+
+        public string Date => DateStr.ToShortDateString();
     }
 }

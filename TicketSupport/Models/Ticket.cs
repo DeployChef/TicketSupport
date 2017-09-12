@@ -25,7 +25,7 @@ namespace TicketSupport.Models
         public List<Message> Messages { get; set; } = new List<Message>();
         public string Category { get; set; }
 
-        public Ticket(TicketRecord ticketsRecord , SupportInfo supInfo)
+        public Ticket(TicketRecord ticketsRecord)
         {
             Id = ticketsRecord.Id;
             Author = new Author(ticketsRecord.Author);
@@ -38,8 +38,8 @@ namespace TicketSupport.Models
             Category = ticketsRecord.Category.Title;
             foreach (var messageRecord in ticketsRecord.Answers)
             {
-                var authorName = messageRecord.AuthorId == Author.UserId ? Author.Login : supInfo.Login;
-                Messages.Add(new Message(messageRecord, authorName));
+                var isUser = messageRecord.AuthorId == Author.UserId;
+                Messages.Add(new Message(messageRecord, isUser));
             } 
         }
 
