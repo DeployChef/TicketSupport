@@ -81,6 +81,7 @@
     <Compile Include="Models\PriorityEnum.cs" />
     <Compile Include="Models\Ticket.cs" />
     <Compile Include="Models\SupportInfo.cs" />
+    <Compile Include="Models\Tickets.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Records\SupportRecord.cs" />
     <Compile Include="Records\TicketsRecord.cs" />

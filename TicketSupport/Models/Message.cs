@@ -13,9 +13,11 @@ namespace TicketSupport.Models
         {
             Text = messageRecord.Text;
             IsUser = isUser;
+            Id = messageRecord.Id;
             DateStr = Convert.ToDateTime(messageRecord.DateStr);
         }
 
+        public int Id { get; set; }
         public string Text { get; set; }
         public DateTime DateStr { get; set; }
         public bool IsUser { get; set; }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Threading;
 using TicketSupport.Records;
 using TicketSupport.ViewModels;
 
@@ -22,10 +24,16 @@ namespace TicketSupport.Models
         public DateTime UpdateDate { get; set; }
         public string CharName { get; set; }
         public string Title { get; set; }
-        public List<Message> Messages { get; set; } = new List<Message>();
+        public ObservableCollection<Message> Messages { get; set; }
         public string Category { get; set; }
 
         public Ticket(TicketRecord ticketsRecord)
+        {
+            Messages = new ObservableCollection<Message>();
+            SetFromticketsRecord(ticketsRecord);
+        }
+
+        public void SetFromticketsRecord(TicketRecord ticketsRecord)
         {
             Id = ticketsRecord.Id;
             Author = new Author(ticketsRecord.Author);
@@ -36,13 +44,17 @@ namespace TicketSupport.Models
             CharName = ticketsRecord.CharName;
             Title = ticketsRecord.Title;
             Category = ticketsRecord.Category.Title;
+   
             foreach (var messageRecord in ticketsRecord.Answers)
             {
-                var isUser = messageRecord.AuthorId == Author.UserId;
-                Messages.Add(new Message(messageRecord, isUser));
-            } 
+                if (Messages.All(c => c.Id != messageRecord.Id))
+                {
+                    var isUser = messageRecord.AuthorId == Author.UserId;
+                    Messages.Add(new Message(messageRecord, isUser));
+                }
+                   
+            }
         }
-
     }
 
 }

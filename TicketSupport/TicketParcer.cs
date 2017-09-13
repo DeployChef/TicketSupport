@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace TicketSupport
     {
         private const string AUTH_URL = "https://hunger-games.ws/api/auth/";
 
-        private const string GET_TICKETS_URL = "https://hunger-games.ws/api/tickets/";
+        private const string TICKETS_URL = "https://hunger-games.ws/api/tickets/";
 
         public static async Task<SupportInfo> GetSupportInfoAsync(String supportToken, CancellationToken token)
         {
@@ -53,19 +54,24 @@ namespace TicketSupport
             
         }
 
-        public static List<Ticket> GetTikets(SupportInfo supInfo)
+        private static TicketsRecord GetTicketsRecords(string supInfo)
+        {
+            var doc = GetXmlFromUrl(TICKETS_URL, supInfo);
+            var serializer = new DataContractSerializer(typeof(TicketsRecord));
+            TicketsRecord record;
+            using (var strReader = new StringReader(doc.InnerXml))
+            using (var reader = XmlReader.Create(strReader))
+            {
+                record = (TicketsRecord) serializer.ReadObject(reader);
+            }
+            return record;
+        }
+
+        public static List<TicketRecord> GetTiketsRecord(string supInfo)
         {
             try
             {
-                var doc = GetXmlFromUrl(GET_TICKETS_URL, supInfo.Token);
-                var serializer = new DataContractSerializer(typeof(TicketsRecord));
-                TicketsRecord record;
-                using (var strReader = new StringReader(doc.InnerXml))
-                using (var reader = XmlReader.Create(strReader))
-                {
-                    record = (TicketsRecord)serializer.ReadObject(reader);
-                }
-                return record?.Select(ticketsRecord => new Ticket(ticketsRecord)).ToList();
+                return GetTicketsRecords(supInfo); ;
             }
             catch (Exception e)
             {
@@ -92,6 +98,42 @@ namespace TicketSupport
             return xdoc;
         }
 
-       
+
+        public static async Task<bool> SendMessageAsync(string newMessageText, string supportToken, int ticketId, CancellationToken token)
+        {
+            return await Task.Run(() => SendMessage(newMessageText, supportToken, ticketId, token), token);
+        }
+
+        private static bool SendMessage(string newMessageText, string supportToken, int ticketId, CancellationToken token)
+        {
+            try
+            {
+                var link = CreateTicketLink(ticketId);
+                // Создаём коллекцию параметров
+                var pars = new NameValueCollection {{"answer", newMessageText}};
+
+                XmlDocument doc = new XmlDocument();
+                using (var webClient = new WebClient())
+                {
+                    webClient.Headers.Add("token", supportToken);
+                    var response = webClient.UploadValues(link, pars);
+                    string xml = Encoding.UTF8.GetString(response);
+                    doc.LoadXml(xml);
+                }
+                token.ThrowIfCancellationRequested();
+                var node = doc.SelectNodes("result");
+                return node != null;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Не удалось, причина [{e.Message}]");
+                return false;
+            }
+        }
+
+        private static string CreateTicketLink(int ticketId)
+        {
+            return TICKETS_URL + ticketId + "/answer";
+        }
     }
 }

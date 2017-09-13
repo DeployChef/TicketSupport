@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using TicketSupport.Models;
@@ -16,9 +17,38 @@ namespace TicketSupport.ViewModels
         private Ticket _selectedTicket;
         private string _status;
         private string _searchText;
+        private string _newMessageText = string.Empty;
+        private bool _isUpdating;
+        private CancellationTokenSource _cts;
+        private readonly Timer _timer;
+        public string SyncDate => DateTime.Now.ToLongTimeString();
 
-        public ObservableCollection<Ticket> Tickets { get; set; } = new ObservableCollection<Ticket>();
+        public bool IsUpdating
+        {
+            get { return _isUpdating; }
+            set
+            {
+                _isUpdating = value;
+                RaisePropertyChanged(() => IsUpdating);
+            }
+        }
+
+        public string NewMessageText
+        {
+            get { return _newMessageText; }
+            set
+            {
+                _newMessageText = value;
+                RaisePropertyChanged(()=>NewMessageText);
+                RaisePropertyChanged(()=>SendMessageCommand);
+            }
+        }
+
+        public Tickets Tickets { get; set; }
         public SupportInfo SupportInfo { get; }
+        public RelayCommand SendMessageCommand { get; }
+        public RelayCommand SyncCommand { get; }
+       
 
         public Ticket SelectedTicket
         {
@@ -26,6 +56,7 @@ namespace TicketSupport.ViewModels
             set
             {
                 _selectedTicket = value;
+                NewMessageText = string.Empty;
                 RaisePropertyChanged(() => SelectedTicket);
             }
         }
@@ -72,27 +103,60 @@ namespace TicketSupport.ViewModels
 
         public MainViewModel(SupportInfo supInfo)
         {
+            _timer = new Timer(SyncTicketsAsync, null, 0, 10000);
+            Tickets = new Tickets();
+            SendMessageCommand = new RelayCommand(SendMessage, can => SelectedTicket != null && NewMessageText.Length > 5);
+            SyncCommand = new RelayCommand(SyncTicketsAsync);
             SupportInfo = supInfo;
-            Task.Factory.StartNew(ParceTiket);
+            IsBusy = true;
+            Task.Factory.StartNew(SyncTickets);
         }
 
-        private void ParceTiket()
+        private async void SyncTicketsAsync(object obj)
         {
-            IsBusy = true;
-            var tikets = TicketParcer.GetTikets(SupportInfo);
-            if (tikets == null)
+            IsUpdating = true;
+            await Task.Factory.StartNew(SyncTickets);
+        }
+
+        private void SyncTickets()
+        {
+            Status = "Получаем обновление";
+            var tiketsRecord = TicketParcer.GetTiketsRecord(SupportInfo.Token);
+            if (tiketsRecord == null)
             {
                 Status = "Не удалось получить тикеты";
-                IsBusy = false;
+                return;
+            }
+            Tickets.SyncTickets(tiketsRecord);
+            RaisePropertyChanged(()=>FiltredTickets);
+            Status = "Данные успешно получены";
+            RaisePropertyChanged(()=>SyncDate);
+            IsBusy = false;
+            IsUpdating = false;
+        }
+
+        private async void SendMessage(object obj)
+        {
+            Status = "Отправка";
+            IsBusy = true;
+            _cts?.Cancel(true);
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
+            var sendTask = TicketParcer.SendMessageAsync(NewMessageText, SupportInfo.Token, SelectedTicket.Id, token);
+            await sendTask;
+            if (sendTask.Result)
+            {
+                Status = "Успешно отправлено";
+                NewMessageText = string.Empty;
+                IsUpdating = true;
+                SyncTickets();
             }
             else
             {
-                Tickets = new ObservableCollection<Ticket>(tikets);
-                RaisePropertyChanged(()=>FiltredTickets);
-                Status = "Данные успешно получены";
-                IsBusy = false;
+                Status = "Отправка не вышла";
             }
-
+            IsBusy = false;
+            _cts = null;
         }
     }
 }
