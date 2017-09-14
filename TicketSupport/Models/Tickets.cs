@@ -12,7 +12,7 @@ namespace TicketSupport.Models
 {
     public class Tickets: ObservableCollection<Ticket>
     {
-
+        public event EventHandler<EventArgs> HaveChanges; 
         private readonly object _locker = new object();
 
         public void SyncTickets(List<TicketRecord> newTickets)
@@ -24,16 +24,22 @@ namespace TicketSupport.Models
                     if (Items.All(ticket => newTicket.Id != ticket.Id))
                     {
                         Add(new Ticket(newTicket));
+                        OnHaveChanges();
                         continue;
                     }
                     var currentTicket = this.FirstOrDefault(t => t.Id == newTicket.Id);
-                    if(currentTicket == null || currentTicket.UpdateDate.CompareTo(Convert.ToDateTime(newTicket.UpdateDate)) > 0)
+                    if(currentTicket == null || currentTicket.UpdateDate.CompareTo(Convert.ToDateTime(newTicket.UpdateDate)) >= 0)
                         continue;
                     currentTicket.SetFromticketsRecord(newTicket);
+                    OnHaveChanges();
                 }
             }
         }
 
-       
+
+        protected virtual void OnHaveChanges()
+        {
+            HaveChanges?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

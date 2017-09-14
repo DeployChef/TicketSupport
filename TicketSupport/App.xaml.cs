@@ -31,7 +31,9 @@ namespace TicketSupport
 
         private void ContextOnLoginSuccess(object sender, SupportInfo supportInfo)
         {
+           
             var view = new MainWindow();
+            Application.Current.MainWindow = view;
             var viewModel = new MainViewModel(supportInfo);
             view.DataContext = viewModel;
             view.Show();

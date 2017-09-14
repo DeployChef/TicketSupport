@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using TicketSupport.Models;
 using TicketSupport.Views;
 
@@ -20,9 +21,10 @@ namespace TicketSupport.ViewModels
         private string _newMessageText = string.Empty;
         private bool _isUpdating;
         private CancellationTokenSource _cts;
+        private bool _isChatChanged;
         private readonly Timer _timer;
         public string SyncDate => DateTime.Now.ToLongTimeString();
-
+        private FlashHelper _flashHelper;
         public bool IsUpdating
         {
             get { return _isUpdating; }
@@ -33,6 +35,15 @@ namespace TicketSupport.ViewModels
             }
         }
 
+        public bool IsChatChanged
+        {
+            get { return _isChatChanged; }
+            set
+            {
+                _isChatChanged = value;
+                RaisePropertyChanged(()=>IsChatChanged);
+            }
+        }
         public string NewMessageText
         {
             get { return _newMessageText; }
@@ -56,6 +67,9 @@ namespace TicketSupport.ViewModels
             set
             {
                 _selectedTicket = value;
+                _selectedTicket.HaveNewMessage = false;
+                IsChatChanged = false;
+                IsChatChanged = true;
                 NewMessageText = string.Empty;
                 RaisePropertyChanged(() => SelectedTicket);
             }
@@ -103,8 +117,16 @@ namespace TicketSupport.ViewModels
 
         public MainViewModel(SupportInfo supInfo)
         {
+            _flashHelper = new FlashHelper(Application.Current);
             _timer = new Timer(SyncTicketsAsync, null, 0, 10000);
             Tickets = new Tickets();
+            Tickets.HaveChanges += (sender, args) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _flashHelper.FlashApplicationWindow();
+                });
+            };
             SendMessageCommand = new RelayCommand(SendMessage, can => SelectedTicket != null && NewMessageText.Length > 5);
             SyncCommand = new RelayCommand(SyncTicketsAsync);
             SupportInfo = supInfo;

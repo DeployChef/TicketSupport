@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:TicketSupport.Controls"
         xmlns:ticketSupport="clr-namespace:TicketSupport"
+        xmlns:models="clr-namespace:TicketSupport.Models;assembly=TicketSupport"
         mc:Ignorable="d"
         Title="TicketSupport" Height="800" Width="1100" MinWidth="700" MinHeight="400" WindowStartupLocation="CenterScreen" Background="#FF322828">
 
     <Window.Resources>
         <ResourceDictionary>
+            <Color x:Key="BorderColor">DarkOrange</Color>
             <ticketSupport:InvertBoolConverter x:Key="invertBoolConverter"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Controls/BusyIndicatorTemplate.xaml"/>
@@ -69,12 +71,70 @@
                     </CollectionViewSource>
                 </Grid.Resources>
                 <ListView ItemsSource="{Binding Source={StaticResource FiltredTickets}}"
-                          SelectedItem="{Binding SelectedTicket}" Background="{x:Null}">
+                          SelectedItem="{Binding SelectedTicket}" Background="{x:Null}"
+                          HorizontalContentAlignment="Stretch">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Title}" FontSize="14" Foreground="#FFDDECEC" />
+                            <Border BorderThickness="1" CornerRadius="2">
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="BorderBrush" Value="#FF686868"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HaveNewMessage}" Value="True" >
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Duration="0:0:0.5" To="DarkOrange"  RepeatBehavior="Forever" AutoReverse="True" Storyboard.TargetProperty="BorderBrush.Color" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" FontSize="14" Foreground="#FFDDECEC" Margin="5,5,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="20,5,0,5">
+                                    <TextBlock  Text="Приоритет:" FontSize="10" Foreground="#FFDDECEC" />
+                                    <Ellipse Width="6" Height="6" Margin="5,3,1,1">
+                                       <Ellipse.Style>
+                                            <Style TargetType="{x:Type Ellipse}">
+                                                <Setter Property="Fill" Value="Azure"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Priority}" Value="{x:Static models:Priority.High}" >
+                                                        <Setter Property="Fill" Value="Crimson"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Priority}" Value="{x:Static models:Priority.Mid}" >
+                                                        <Setter Property="Fill" Value="Blue"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Priority}" Value="{x:Static models:Priority.Low}" >
+                                                        <Setter Property="Fill" Value="DarkGreen"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <TextBlock  Text="Статус:" FontSize="10" Foreground="#FFDDECEC" Margin="10,0,0,0"/>
+                                    <TextBlock  FontSize="10" Foreground="#FFDDECEC" Margin="5,0,0,0">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text" Value="нет данных"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:Status.Open}" >
+                                                        <Setter Property="Text" Value="Открыт"/>
+                                                        <Setter Property="Foreground" Value="DarkGreen"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="{x:Static models:Status.Close}" >
+                                                        <Setter Property="Text" Value="Открыт"/>
+                                                        <Setter Property="Foreground" Value="Crimson"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
                             </StackPanel>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.GroupStyle>
@@ -123,7 +183,7 @@
                     </StackPanel>
                 </StackPanel>
                 <Border Background="#FF3E3E42" BorderBrush="#FF686868" BorderThickness="2">
-                    <ScrollViewer  Margin="5" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer ticketSupport:ScrollHelper.AutoScroll="{Binding IsChatChanged}" Margin="5" VerticalScrollBarVisibility="Auto">
                         <ScrollViewer.Resources>
                             <CollectionViewSource x:Key="Messages" Source="{Binding SelectedTicket.Messages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <CollectionViewSource.GroupDescriptions>

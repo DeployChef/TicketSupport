@@ -18,6 +18,7 @@ namespace TicketSupport.Models
         public string ServerName { get; set; }
         public bool NewMessage { get; set; }
         public Priority Priority { get; set; }
+        public bool HaveNewMessage { get; set; }
         public Status Status { get; set; }
         public string DateIncident { get; set; }
         public DateTime CreateDate { get; set; }
@@ -44,13 +45,15 @@ namespace TicketSupport.Models
             CharName = ticketsRecord.CharName;
             Title = ticketsRecord.Title;
             Category = ticketsRecord.Category.Title;
-   
+            Priority = (Priority)ticketsRecord.Priority;
+            Status = (Status)ticketsRecord.Status;
             foreach (var messageRecord in ticketsRecord.Answers)
             {
                 if (Messages.All(c => c.Id != messageRecord.Id))
                 {
                     var isUser = messageRecord.AuthorId == Author.UserId;
                     Messages.Add(new Message(messageRecord, isUser));
+                    if(isUser) HaveNewMessage = true;
                 }
                    
             }
