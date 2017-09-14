@@ -7,6 +7,7 @@ using TicketSupport.Records;
 
 namespace TicketSupport.Models
 {
+    [Serializable]
     public class Message
     {
         public Message(AnswerRecord messageRecord, bool isUser)

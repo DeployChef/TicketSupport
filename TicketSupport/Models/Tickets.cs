@@ -10,8 +10,11 @@ using TicketSupport.Records;
 
 namespace TicketSupport.Models
 {
+    [Serializable]
     public class Tickets: ObservableCollection<Ticket>
     {
+        public string Owner { get; }
+        [field: NonSerialized]
         public event EventHandler<EventArgs> HaveChanges; 
         private readonly object _locker = new object();
 
@@ -36,7 +39,11 @@ namespace TicketSupport.Models
             }
         }
 
-
+        public Tickets(string owner)
+        {
+            Owner = owner;
+        }
+       
         protected virtual void OnHaveChanges()
         {
             HaveChanges?.Invoke(this, EventArgs.Empty);

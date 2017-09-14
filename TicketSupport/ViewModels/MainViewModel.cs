@@ -22,9 +22,12 @@ namespace TicketSupport.ViewModels
         private bool _isUpdating;
         private CancellationTokenSource _cts;
         private bool _isChatChanged;
-        private readonly Timer _timer;
+        private Timer _timer;
         public string SyncDate => DateTime.Now.ToLongTimeString();
         private FlashHelper _flashHelper;
+
+        public int CurrentVersion => Properties.Settings.Default.Version;
+
         public bool IsUpdating
         {
             get { return _isUpdating; }
@@ -58,6 +61,8 @@ namespace TicketSupport.ViewModels
         public Tickets Tickets { get; set; }
         public SupportInfo SupportInfo { get; }
         public RelayCommand SendMessageCommand { get; }
+        public RelayCommand CloseWindowCommand { get; }
+        public RelayCommand CloseTicketCommand { get; }
         public RelayCommand SyncCommand { get; }
        
 
@@ -113,13 +118,34 @@ namespace TicketSupport.ViewModels
         private void ClearSearchText(object obj)
         {
             SearchText = string.Empty;
+            HistoryHelper.SaveHistory(Tickets);
         }
 
         public MainViewModel(SupportInfo supInfo)
         {
             _flashHelper = new FlashHelper(Application.Current);
+           
+            SendMessageCommand = new RelayCommand(SendMessage, can => СanSendMessage());
+            CloseWindowCommand = new RelayCommand(o => {HistoryHelper.SaveHistory(Tickets);});
+            CloseTicketCommand = new RelayCommand(CloseTicket, can => SelectedTicket != null && SelectedTicket.Status == Models.Status.Open);
+            SyncCommand = new RelayCommand(SyncTicketsAsync);
+            SupportInfo = supInfo;
+            IsBusy = true;
+            Task.Factory.StartNew(LoadTickets).ContinueWith(EndLoad, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void EndLoad(Task obj)
+        {
             _timer = new Timer(SyncTicketsAsync, null, 0, 10000);
-            Tickets = new Tickets();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _flashHelper.StopFlashing();
+            });
+        }
+
+        private void LoadTickets()
+        {
+            Tickets = HistoryHelper.LoadHistory(SupportInfo.Token);
             Tickets.HaveChanges += (sender, args) =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
@@ -127,11 +153,35 @@ namespace TicketSupport.ViewModels
                     _flashHelper.FlashApplicationWindow();
                 });
             };
-            SendMessageCommand = new RelayCommand(SendMessage, can => SelectedTicket != null && NewMessageText.Length > 5);
-            SyncCommand = new RelayCommand(SyncTicketsAsync);
-            SupportInfo = supInfo;
+            SyncTickets();
+        }
+
+        public bool СanSendMessage()
+        {
+            return SelectedTicket != null && NewMessageText.Length > 5 && SelectedTicket.Status == Models.Status.Open;
+        }
+
+        private async void CloseTicket(object obj)
+        {
+            Status = "Закрываем";
             IsBusy = true;
-            Task.Factory.StartNew(SyncTickets);
+            _cts?.Cancel(true);
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
+            var sendTask = TicketParcer.CloseTicketAsync(SupportInfo.Token, SelectedTicket.Id, token);
+            await sendTask;
+            if (sendTask.Result)
+            {
+                Status = "Тикет закрыт";
+                IsUpdating = true;
+                SyncTickets();
+            }
+            else
+            {
+                Status = "Что то пошло не так";
+            }
+            IsBusy = false;
+            _cts = null;
         }
 
         private async void SyncTicketsAsync(object obj)

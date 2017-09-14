@@ -108,7 +108,7 @@ namespace TicketSupport
         {
             try
             {
-                var link = CreateTicketLink(ticketId);
+                var link = CreateTicketLink(ticketId,"answer");
                 // Создаём коллекцию параметров
                 var pars = new NameValueCollection {{"answer", newMessageText}};
 
@@ -122,7 +122,7 @@ namespace TicketSupport
                 }
                 token.ThrowIfCancellationRequested();
                 var node = doc.SelectNodes("result");
-                return node != null;
+                return node?.Count!=0;
             }
             catch (Exception e)
             {
@@ -131,9 +131,33 @@ namespace TicketSupport
             }
         }
 
-        private static string CreateTicketLink(int ticketId)
+        private static string CreateTicketLink(int ticketId, string action)
         {
-            return TICKETS_URL + ticketId + "/answer";
+            return TICKETS_URL + ticketId + "/"+action;
+        }
+
+        public static async Task<bool> CloseTicketAsync(string supportToken, int ticketId, CancellationToken token)
+        {
+            return await Task.Run(() => CloseTicket(supportToken, ticketId, token), token);
+        }
+
+        private static bool CloseTicket(string supportToken, int ticketId, CancellationToken token)
+        {
+            try
+            {
+                var link = CreateTicketLink(ticketId,"close");
+
+                XmlDocument doc = GetXmlFromUrl(link, supportToken);
+
+                token.ThrowIfCancellationRequested();
+                var res = doc.SelectNodes("res");
+                return res!=null && res.Cast<XmlNode>().Any(node => node.Name == "status" && node.InnerText == "OK");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Не удалось, причина [{e.Message}]");
+                return false;
+            }
         }
     }
 }
