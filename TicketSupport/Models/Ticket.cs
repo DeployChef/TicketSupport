@@ -11,14 +11,22 @@ using TicketSupport.ViewModels;
 
 namespace TicketSupport.Models
 {
+    [Serializable]
     public class Ticket
     {
+        [NonSerialized]
+        private bool _haveNewMessage;
+        public bool HaveNewMessage
+        {
+            get { return _haveNewMessage; }
+            set { _haveNewMessage = value; }
+        }
+
         public int Id { get; set; }
         public Author Author { get; set; }
         public string ServerName { get; set; }
         public bool NewMessage { get; set; }
         public Priority Priority { get; set; }
-        public bool HaveNewMessage { get; set; }
         public Status Status { get; set; }
         public string DateIncident { get; set; }
         public DateTime CreateDate { get; set; }
