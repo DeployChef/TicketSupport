@@ -8,7 +8,7 @@
         xmlns:ticketSupport="clr-namespace:TicketSupport"
         mc:Ignorable="d"
         Title="Авторизация" Height="166.279" Width="387.024" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
-        d:DataContext="{d:DesignInstance viewmodels:LoginViewModel}">
+        d:DataContext="{d:DesignInstance viewmodels:LoginViewModel}" Icon="/TicketSupport;component/Picture/ticket-512.ico">
     <Window.Resources>
         <ticketSupport:InvertBoolConverter x:Key="invertBoolConverter"/>
         <Style x:Key="FocusVisual">

@@ -37,7 +37,7 @@ namespace TicketSupport.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("UpdateUrl")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://cloud.hunger-games.ws/update/")]
         public string UpdateUrl {
             get {
                 return ((string)(this["UpdateUrl"]));
