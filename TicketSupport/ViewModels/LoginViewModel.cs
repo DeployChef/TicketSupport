@@ -41,8 +41,6 @@ namespace TicketSupport.ViewModels
         public LoginViewModel()
         {
             EnterCommand = new RelayCommand(Login, can => !SupportToken.IsNullOrEmpty() && !IsBusy);
-            SupportToken = "new-token";
-            Login(null);
         }
 
         public async void Login(object obj)

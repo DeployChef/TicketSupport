@@ -10,10 +10,10 @@ using System.Windows;
 [assembly: AssemblyTitle("TicketSupport")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("UpNova.ru")]
 [assembly: AssemblyProduct("TicketSupport")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("UpNova.ru Copyright ©  2017")]
+[assembly: AssemblyTrademark("UpNova.ru")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

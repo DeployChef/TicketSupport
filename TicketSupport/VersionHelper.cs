@@ -14,20 +14,22 @@ namespace TicketSupport
     public static class VersionHelper
     {
         private const string UPDATER_FILE_NAME = "upd.exe";
-        private const string VERSION_FILE_NAME = "version.txt";
+        private const string VERSION_FILE_NAME = "ticketsup.version";
         private static readonly string MainDirSavePath = System.AppDomain.CurrentDomain.BaseDirectory;
         public static void CheckUpdate()
         {
-            if (GetVersion() > Convert.ToInt32(Properties.Settings.Default.Version))
-            {
-                Downdload(Properties.Settings.Default.UpdateUrl + UPDATER_FILE_NAME, MainDirSavePath + "upd.exe");
-                if (File.Exists("upd.exe"))
+            Task.Run(() => {
+                if (GetVersion() > Convert.ToInt32(Properties.Settings.Default.Version))
                 {
-                    MessageBox.Show("New version exists. Click OK to download a new version.");
-                    Process.Start("upd.exe", Assembly.GetExecutingAssembly().ManifestModule.Name);
-                    Application.Current.Shutdown();
+                    Downdload(Properties.Settings.Default.UpdateUrl + UPDATER_FILE_NAME, MainDirSavePath + "upd.exe");
+                    if (File.Exists("upd.exe"))
+                    {
+                        MessageBox.Show("New version exists. Click OK to download a new version.");
+                        Process.Start("upd.exe", Assembly.GetExecutingAssembly().ManifestModule.Name);
+                        Application.Current.Shutdown();
+                    }
                 }
-            }
+            });
         }
 
         private static void Downdload(string url, string saveFilePath)
