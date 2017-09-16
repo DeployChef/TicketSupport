@@ -42,6 +42,7 @@
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
@@ -84,6 +85,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\BusyIndicator.cs" />
+    <Compile Include="EnumeratorExtension.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FlashHelper.cs" />
     <Compile Include="HistoryHelper.cs" />
@@ -101,6 +103,7 @@
     <Compile Include="Records\TicketsRecord.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ScrollHelper.cs" />
+    <Compile Include="SoundManager.cs" />
     <Compile Include="TicketParcer.cs" />
     <Compile Include="VersionHelper.cs" />
     <Compile Include="ViewModels\ChatTemplateSelector.cs" />
@@ -154,6 +157,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Picture\ticket-512.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Picture\here-i-am.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

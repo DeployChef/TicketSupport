@@ -21,7 +21,7 @@ namespace TicketSupport.ViewModels
         private string _status = "Добро пожаловать";
        
         public Action CloseAction { get; set; }
-        public string SupportToken { get; set; }
+        public string SupportToken { get; set; } = Properties.Settings.Default.LastToken;
 
         public string Status
         {
@@ -56,6 +56,7 @@ namespace TicketSupport.ViewModels
             {
 
                 Status = "Успешно";
+                Properties.Settings.Default.LastToken = SupportToken;
                 OnLoginSuccess(loginTask.Result);
                 CloseAction();
             }

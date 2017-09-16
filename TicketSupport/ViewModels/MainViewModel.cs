@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
@@ -22,11 +23,58 @@ namespace TicketSupport.ViewModels
         private bool _isUpdating;
         private CancellationTokenSource _cts;
         private bool _isChatChanged;
+        private bool _isOpenOnly;
+        private bool _isSortDate;
+        private Priority _currentPriority = Priority.All;
+        private bool _isUnReadOnly;
         private Timer _timer;
         public string SyncDate => DateTime.Now.ToLongTimeString();
         private FlashHelper _flashHelper;
 
         public int CurrentVersion => Properties.Settings.Default.Version;
+
+        public bool IsOpenOnly
+        {
+            get { return _isOpenOnly; }
+            set
+            {
+                _isOpenOnly = value; 
+                RaisePropertyChanged(()=>IsOpenOnly);
+                RaisePropertyChanged(()=>FiltredTickets);
+            }
+        }
+
+        public bool IsSortDate
+        {
+            get { return _isSortDate; }
+            set
+            {
+                _isSortDate = value;
+                RaisePropertyChanged(() => IsSortDate);
+                RaisePropertyChanged(() => FiltredTickets);
+            }
+        }
+        public bool IsUnReadOnly
+        {
+            get { return _isUnReadOnly; }
+            set
+            {
+                _isUnReadOnly = value;
+                RaisePropertyChanged(() => IsUnReadOnly);
+                RaisePropertyChanged(() => FiltredTickets);
+            }
+        }
+        public Priority CurrentPriority
+        {
+            get { return _currentPriority; }
+            set
+            {
+                _currentPriority = value;
+                RaisePropertyChanged(() => CurrentPriority);
+                RaisePropertyChanged(() => FiltredTickets);
+            }
+        }
+
 
         public bool IsUpdating
         {
@@ -70,8 +118,12 @@ namespace TicketSupport.ViewModels
             get { return _selectedTicket; }
             set
             {
+
                 _selectedTicket = value;
+
+                if(_selectedTicket!=null)
                 _selectedTicket.HaveNewMessage = false;
+
                 IsChatChanged = false;
                 IsChatChanged = true;
                 NewMessageText = string.Empty;
@@ -108,7 +160,12 @@ namespace TicketSupport.ViewModels
         {
             get
             {
-                return SearchText.IsNullOrEmpty() ? Tickets.ToList() : Tickets.Where(c => c.Title.Contains(SearchText)).ToList();
+                IEnumerable<Ticket> filtredTickets = _isSortDate ? Tickets.OrderBy(c => c.UpdateDate) : Tickets.OrderBy(c => c.Id);
+                filtredTickets = _isOpenOnly
+                    ? filtredTickets.Where(c => c.Status == Models.Status.Open)
+                    : filtredTickets;
+                filtredTickets = _currentPriority != Priority.All ? filtredTickets.Where(c => c.Priority == _currentPriority) : filtredTickets;
+                return SearchText.IsNullOrEmpty() ? filtredTickets.ToList() : filtredTickets.Where(c => c.Title.ToUpperInvariant().Contains(SearchText.ToUpperInvariant())).ToList();
             }
         }
 
@@ -124,12 +181,25 @@ namespace TicketSupport.ViewModels
         {
             _flashHelper = new FlashHelper(Application.Current);
             SendMessageCommand = new RelayCommand(SendMessage, can => СanSendMessage());
-            CloseWindowCommand = new RelayCommand(o => {HistoryHelper.SaveHistory(Tickets);});
+            CloseWindowCommand = new RelayCommand(o =>
+            {
+                Properties.Settings.Default.Save();
+                HistoryHelper.SaveHistory(Tickets);
+            });
             CloseTicketCommand = new RelayCommand(CloseTicket, can => SelectedTicket != null && SelectedTicket.Status == Models.Status.Open);
             SyncCommand = new RelayCommand(SyncTicketsAsync);
             SupportInfo = supInfo;
             IsBusy = true;
             Task.Factory.StartNew(LoadTickets).ContinueWith(EndLoad, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void CloseTicket(object obj)
+        {
+            var dialogResult = MessageBox.Show("Вы уверены что хотите закрыть тикет?", "Закрытие тикета", MessageBoxButton.YesNo);
+            if (dialogResult == MessageBoxResult.Yes)
+            {
+                CloseTicketAsync();
+            }
         }
 
         private void EndLoad(Task obj)
@@ -146,6 +216,7 @@ namespace TicketSupport.ViewModels
             Tickets = HistoryHelper.LoadHistory(SupportInfo.Token);
             Tickets.HaveChanges += (sender, args) =>
             {
+                SoundManager.PlayNewMessage();
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     _flashHelper.FlashApplicationWindow();
@@ -159,7 +230,7 @@ namespace TicketSupport.ViewModels
             return SelectedTicket != null && NewMessageText.Length > 5 && SelectedTicket.Status == Models.Status.Open;
         }
 
-        private async void CloseTicket(object obj)
+        private async void CloseTicketAsync()
         {
             Status = "Закрываем";
             IsBusy = true;
