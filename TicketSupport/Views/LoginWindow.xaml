@@ -70,7 +70,7 @@
         <StackPanel Margin="10">
             <Label  Foreground="Azure" Margin="0,0,0,0" Content="{Binding Status}" HorizontalContentAlignment="Center"/>
             <Label  Foreground="Azure" Margin="10,0,10,0" Content="Введите токен" HorizontalContentAlignment="Center"/>
-            <TextBox  Foreground="Azure" Text="{Binding SupportToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBoolConverter}}"  HorizontalContentAlignment="Center" Margin="10,0,10,10" x:Name="textBox"  TextWrapping="Wrap" Background="{x:Null}" BorderBrush="#FF686868" />
+            <TextBox CaretBrush ="Azure" Foreground="Azure" Text="{Binding SupportToken, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsBusy, Converter={StaticResource invertBoolConverter}}"  HorizontalContentAlignment="Center" Margin="10,0,10,10" x:Name="textBox"  TextWrapping="Wrap" Background="{x:Null}" BorderBrush="#FF686868" />
             <Button Foreground="Azure" Command="{Binding EnterCommand}" Margin="15,0,15,0" x:Name="button" Content="Вход" Background="#FF3F3F46" Style="{DynamicResource ButtonStyle1}" />
         </StackPanel>
     </Grid>

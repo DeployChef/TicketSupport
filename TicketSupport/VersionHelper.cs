@@ -13,7 +13,7 @@ namespace TicketSupport
 {
     public static class VersionHelper
     {
-        private const string UPDATER_FILE_NAME = "upd.exe";
+        private const string UPDATER_FILE_NAME = "autoupd.exe";
         private const string VERSION_FILE_NAME = "ticketsup.version";
         private static readonly string MainDirSavePath = System.AppDomain.CurrentDomain.BaseDirectory;
         public static void CheckUpdate()
@@ -21,11 +21,11 @@ namespace TicketSupport
             Task.Run(() => {
                 if (GetVersion() > Convert.ToInt32(Properties.Settings.Default.Version))
                 {
-                    Downdload(Properties.Settings.Default.UpdateUrl + UPDATER_FILE_NAME, MainDirSavePath + "upd.exe");
-                    if (File.Exists("upd.exe"))
+                    Downdload(Properties.Settings.Default.UpdateUrl + UPDATER_FILE_NAME, MainDirSavePath + UPDATER_FILE_NAME);
+                    if (File.Exists(UPDATER_FILE_NAME))
                     {
                         MessageBox.Show("New version exists. Click OK to download a new version.");
-                        Process.Start("upd.exe", Assembly.GetExecutingAssembly().ManifestModule.Name);
+                        Process.Start(UPDATER_FILE_NAME, Assembly.GetExecutingAssembly().ManifestModule.Name);
                         Application.Current.Shutdown();
                     }
                 }
@@ -36,7 +36,6 @@ namespace TicketSupport
         {
             try
             {
-
                 var webRequest = (HttpWebRequest)WebRequest.Create(url);
                 webRequest.Credentials = CredentialCache.DefaultCredentials;
                 var webResponse = (HttpWebResponse)webRequest.GetResponse();
@@ -81,13 +80,13 @@ namespace TicketSupport
 
         private static void ClearFiles()
         {
-            if (File.Exists(MainDirSavePath + "upd.exe"))
+            if (File.Exists(MainDirSavePath + UPDATER_FILE_NAME))
             {
-                File.Delete(MainDirSavePath + "upd.exe");
+                File.Delete(MainDirSavePath + UPDATER_FILE_NAME);
             }
-            if (File.Exists(MainDirSavePath + "updaterver.txt"))
+            if (File.Exists(MainDirSavePath + VERSION_FILE_NAME))
             {
-                File.Delete(MainDirSavePath + "updaterver.txt");
+                File.Delete(MainDirSavePath + VERSION_FILE_NAME);
             }
         }
     }

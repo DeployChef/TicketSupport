@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
 using TicketSupport.Records;
@@ -60,10 +61,12 @@ namespace TicketSupport.Models
                 if (Messages.All(c => c.Id != messageRecord.Id))
                 {
                     var isUser = messageRecord.AuthorId == Author.UserId;
-                    Messages.Add(new Message(messageRecord, isUser));
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Messages.Add(new Message(messageRecord, isUser));
+                    });
                     if(isUser) HaveNewMessage = true;
                 }
-                   
             }
         }
     }

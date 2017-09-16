@@ -30,9 +30,11 @@ namespace TicketSupport
 
         private static SupportInfo GetSupportInfo(string supportToken, CancellationToken token)
         {
+            XmlDocument doc = null;
             try
             {
-                var doc = GetXmlFromUrl(AUTH_URL, supportToken); 
+                doc = GetXmlFromUrl(AUTH_URL, supportToken);
+
                 var supInfo = new SupportInfo(supportToken);
 
                 var serializer = new DataContractSerializer(typeof(SupportRecord));
@@ -48,6 +50,11 @@ namespace TicketSupport
             }
             catch (Exception e)
             {
+                if (doc!=null && doc.InnerText.Contains("Token not found"))
+                {
+                    MessageBox.Show($"Не удалось, такой токен не найден");
+                    return null;
+                }
                 MessageBox.Show($"Не удалось, причина [{e.Message}]");
                 return null;
             }
