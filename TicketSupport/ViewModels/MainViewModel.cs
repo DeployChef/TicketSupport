@@ -112,7 +112,6 @@ namespace TicketSupport.ViewModels
         public RelayCommand CloseWindowCommand { get; }
         public RelayCommand CloseTicketCommand { get; }
         public RelayCommand SyncCommand { get; }
-       
 
         public Ticket SelectedTicket
         {
@@ -181,7 +180,6 @@ namespace TicketSupport.ViewModels
         public MainViewModel(SupportInfo supInfo)
         {
             _flashHelper = new FlashHelper(Application.Current);
-           
             SendMessageCommand = new RelayCommand(SendMessage, can => СanSendMessage());
             CloseWindowCommand = new RelayCommand(o =>
             {
