@@ -87,6 +87,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FlashHelper.cs" />
     <Compile Include="HistoryHelper.cs" />
+    <Compile Include="InputBindingsManager.cs" />
     <Compile Include="InvertBoolConverter.cs" />
     <Compile Include="Models\Author.cs" />
     <Compile Include="Models\StatusEnum.cs" />

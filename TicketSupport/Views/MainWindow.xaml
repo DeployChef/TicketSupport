@@ -287,7 +287,7 @@
 
             <Grid Grid.Row="2" Background="#FF3E3E42" Margin="0,0,5,5">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="10,10,84,10" Background="#FF686868">
-                    <TextBox Foreground="Azure" Text="{Binding NewMessageText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Padding="5" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <TextBox Foreground="Azure"  AcceptsReturn="True" Text="{Binding NewMessageText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Padding="5" Background="{x:Null}" BorderBrush="{x:Null}">
                         <TextBox.Style>
                             <Style TargetType="{x:Type TextBox}">
                                 <Setter Property="IsEnabled" Value="True" />
