@@ -105,6 +105,27 @@ namespace TicketSupport
             return xdoc;
         }
 
+        private static XmlDocument GetXmlFromUrl2(string url, string token)
+        {
+            var xdoc = new XmlDocument();
+            var request = (HttpWebRequest)WebRequest.Create(url);
+
+            request.Headers.Add("token", token);
+
+            request.Method = "GET";
+            request.Accept = "application/json";
+
+            using (var response = (HttpWebResponse) request.GetResponse())
+            {
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    var l = reader.ReadToEnd();
+                }
+            }
+
+
+            return xdoc;
+        }
 
         public static async Task<bool> SendMessageAsync(string newMessageText, string supportToken, int ticketId, CancellationToken token)
         {

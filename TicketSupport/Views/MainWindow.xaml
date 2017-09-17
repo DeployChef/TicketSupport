@@ -419,7 +419,7 @@
                     <CheckBox Margin="3" Foreground="Azure" IsChecked="{Binding IsOpenOnly, Mode=TwoWay}" Content="Только открытые" Grid.Row="0" Grid.Column="0" />
                     <CheckBox Margin="3" Foreground="Azure" IsChecked="{Binding IsSortDate, Mode=TwoWay}" Content="Сотрировать по дате" Grid.Row="0" Grid.Column="1"/>
                     <CheckBox Margin="3" Foreground="Azure" IsChecked="{Binding IsUnReadOnly, Mode=TwoWay}" Content="Только не прочитанные" Grid.Row="1" Grid.Column="0"/>
-                    <ComboBox Margin="3" Foreground="Azure" 
+                    <!--<ComboBox Margin="3" Foreground="Azure" 
                               ItemsSource="{Binding Source={ticketSupport:Enumeration {x:Type models:Priority}}}" 
                               DisplayMemberPath="Description" 
                               SelectedValue="{Binding CurrentPriority, Mode=TwoWay}"  
@@ -430,7 +430,7 @@
                                 <GradientStop Color="#FF252526" Offset="1"/>
                             </LinearGradientBrush>
                         </ComboBox.Background>
-                    </ComboBox>
+                    </ComboBox>-->
                 </Grid>
             </Grid>
             <Grid Grid.Row="5" Background="#FF3E3E42">
