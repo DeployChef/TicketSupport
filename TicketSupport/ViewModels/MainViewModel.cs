@@ -23,14 +23,15 @@ namespace TicketSupport.ViewModels
         private bool _isUpdating;
         private CancellationTokenSource _cts;
         private bool _isChatChanged;
-        private bool _isOpenOnly;
+        private bool _isOpenOnly = true;
         private bool _isSortDate;
-        private Priority _currentPriority = Priority.All;
+        private Priority _currentPriority;
         private bool _isUnReadOnly;
         private Timer _timer;
         public string SyncDate => DateTime.Now.ToLongTimeString();
         private FlashHelper _flashHelper;
 
+        public bool PlaySound { get; set; } = true;
         public int CurrentVersion => Properties.Settings.Default.Version;
 
         public bool IsOpenOnly
@@ -160,11 +161,12 @@ namespace TicketSupport.ViewModels
         {
             get
             {
-                IEnumerable<Ticket> filtredTickets = _isSortDate ? Tickets.OrderBy(c => c.UpdateDate) : Tickets.OrderBy(c => c.Id);
+                IEnumerable<Ticket> filtredTickets = _isSortDate ? Tickets.OrderByDescending(c => c.UpdateDate) : Tickets.OrderBy(c => c.Id);
                 filtredTickets = _isOpenOnly
                     ? filtredTickets.Where(c => c.Status == Models.Status.Open)
                     : filtredTickets;
                 filtredTickets = _currentPriority != Priority.All ? filtredTickets.Where(c => c.Priority == _currentPriority) : filtredTickets;
+                filtredTickets = _isUnReadOnly ? filtredTickets.Where(c => c.HaveNewMessage || c.Id == SelectedTicket.Id) : filtredTickets;
                 return SearchText.IsNullOrEmpty() ? filtredTickets.ToList() : filtredTickets.Where(c => c.Title.ToUpperInvariant().Contains(SearchText.ToUpperInvariant())).ToList();
             }
         }
@@ -174,17 +176,16 @@ namespace TicketSupport.ViewModels
         private void ClearSearchText(object obj)
         {
             SearchText = string.Empty;
-            HistoryHelper.SaveHistory(Tickets);
         }
 
         public MainViewModel(SupportInfo supInfo)
         {
+            CurrentPriority = Priority.All;
             _flashHelper = new FlashHelper(Application.Current);
             SendMessageCommand = new RelayCommand(SendMessage, can => СanSendMessage());
             CloseWindowCommand = new RelayCommand(o =>
             {
                 Properties.Settings.Default.Save();
-                HistoryHelper.SaveHistory(Tickets);
             });
             CloseTicketCommand = new RelayCommand(CloseTicket, can => SelectedTicket != null && SelectedTicket.Status == Models.Status.Open);
             SyncCommand = new RelayCommand(SyncTicketsAsync);
@@ -213,9 +214,11 @@ namespace TicketSupport.ViewModels
 
         private void LoadTickets()
         {
-            Tickets = HistoryHelper.LoadHistory(SupportInfo.Token);
+            Tickets = new Tickets(SupportInfo.Token);
+            //Tickets = HistoryHelper.LoadHistory(SupportInfo.Token);
             Tickets.HaveChanges += (sender, args) =>
             {
+                if(PlaySound)
                 SoundManager.PlayNewMessage();
                 Application.Current.Dispatcher.Invoke(() =>
                 {
