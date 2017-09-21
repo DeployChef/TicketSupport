@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Mime;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace TicketSupport.ViewModels
         private FlashHelper _flashHelper;
 
         public bool PlaySound { get; set; } = true;
-        public int CurrentVersion => Properties.Settings.Default.Version;
+        public string CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public bool IsOpenOnly
         {
@@ -166,7 +167,7 @@ namespace TicketSupport.ViewModels
                     ? filtredTickets.Where(c => c.Status == Models.Status.Open)
                     : filtredTickets;
                 filtredTickets = _currentPriority != Priority.All ? filtredTickets.Where(c => c.Priority == _currentPriority) : filtredTickets;
-                filtredTickets = _isUnReadOnly ? filtredTickets.Where(c => c.HaveNewMessage || c.Id == SelectedTicket.Id) : filtredTickets;
+                filtredTickets = _isUnReadOnly ? filtredTickets.Where(c => c.HaveNewMessage || c.Id == SelectedTicket?.Id) : filtredTickets;
                 return SearchText.IsNullOrEmpty() ? filtredTickets.ToList() : filtredTickets.Where(c => c.Title.ToUpperInvariant().Contains(SearchText.ToUpperInvariant())).ToList();
             }
         }
@@ -244,6 +245,7 @@ namespace TicketSupport.ViewModels
             await sendTask;
             if (sendTask.Result)
             {
+                SelectedTicket.Status = Models.Status.Close;;
                 Status = "Тикет закрыт";
                 IsUpdating = true;
                 SyncTickets();
