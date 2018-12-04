@@ -1,0 +1,42 @@
+﻿<Application x:Class="TicketSupport.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TicketSupport"
+             xmlns:viewModels="clr-namespace:TicketSupport.ViewModels"
+             Startup="OnStartup">
+    <Application.Resources>
+
+        <DataTemplate x:Key="ChatTemplateR">
+            <Grid Margin="0,0,0,5">
+                <StackPanel>
+                    <StackPanel Background="#FF2D2D30">
+                        <TextBox BorderThickness="0" IsReadOnly="True" Background="Transparent" FontSize="14"  Foreground="Azure" MinWidth="100" Text="{Binding Text}" TextWrapping="Wrap" AcceptsReturn="True"  Margin="5"/>
+                        <TextBlock Foreground="Silver" HorizontalAlignment="Right" FontSize="8" Text="{Binding Time}" Margin="0,-5,3,0"/>
+                    </StackPanel>
+                    <Path x:Name="DownRightTri"
+              HorizontalAlignment="Right" 
+              Margin="0,0,10,0"
+              Fill="#FF2D2D30"
+              Data="M0,0 H10 V10" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="ChatTemplateL">
+            <Grid Margin="0,0,0,5">
+                <StackPanel>
+                    <Path x:Name="UpLeftTri"
+              HorizontalAlignment="Left" 
+              Margin="10,0,0,0" 
+              Fill="#FF57575B"
+              Data="M0,-5 V5 H10 " />
+                    <StackPanel Background="#FF57575B">
+                        <TextBox BorderThickness="0" IsReadOnly="True" Background="Transparent" FontSize="14"  Foreground="Azure" MinWidth="100" Text="{Binding Text}" TextWrapping="Wrap" AcceptsReturn="True"  Margin="5"/>
+                        <TextBlock Foreground="Silver" HorizontalAlignment="Right" FontSize="8" Text="{Binding Time}" Margin="0,-5,3,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <viewModels:ChatTemplateSelector x:Key="ChatSelector" LeftTemplate="{StaticResource ChatTemplateL}" RightTemplate="{StaticResource ChatTemplateR}"/>
+
+    </Application.Resources>
+</Application>
