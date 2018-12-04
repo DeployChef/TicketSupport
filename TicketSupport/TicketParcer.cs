@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection.Emit;
 using System.Runtime.Serialization;
 using System.Text;
@@ -89,20 +90,33 @@ namespace TicketSupport
 
         private static XmlDocument GetXmlFromUrl(string url, string token)
         {
-            var xdoc = new XmlDocument();
-            var request = (HttpWebRequest)WebRequest.Create(url);
-           
-            request.Headers.Add("token", token);
-
-            request.Method = "GET";
-            request.Accept = "application/json";
-
-            using (var response = (HttpWebResponse)request.GetResponse())
+            try
             {
-                xdoc.Load(response.GetResponseStream());
-            }
+                var xdoc = new XmlDocument();
+                var request = (HttpWebRequest)WebRequest.Create(url);
 
-            return xdoc;
+                request.Headers.Add("token", token);
+
+                request.Method = "GET";
+                request.Accept = "application/json";
+
+                using (var response = (HttpWebResponse)request.GetResponse())
+                {
+                    xdoc.Load(response.GetResponseStream());
+                }
+
+                return xdoc;
+            }
+            catch (XmlException e)
+            {
+                throw new Exception("Не удалось загрузить XML, проверьте Хост");
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            
+
         }
 
         private static XmlDocument GetXmlFromUrl2(string url, string token)

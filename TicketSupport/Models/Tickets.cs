@@ -22,6 +22,21 @@ namespace TicketSupport.Models
         {
             lock (_locker)
             {
+                var removeList = new List<Ticket>();
+                foreach (var ticket in Items)
+                {
+                    if (newTickets.All(t => t.Id != ticket.Id))
+                    {
+                        removeList.Add(ticket);
+                        continue;
+                    }
+                    if(ticket.Status == Status.Close)
+                        removeList.Add(ticket);
+                }
+                foreach (var removeTicket in removeList)
+                {
+                    Items.Remove(removeTicket);
+                }
                 foreach (var newTicket in newTickets)
                 {
                     if (Items.All(ticket => newTicket.Id != ticket.Id))
