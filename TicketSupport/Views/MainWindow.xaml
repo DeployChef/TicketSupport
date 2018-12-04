@@ -431,7 +431,7 @@
                                 <GradientStop Color="#FF252526" Offset="1"/>
                             </LinearGradientBrush>
                         </ComboBox.Background>
-                    </ComboBox>
+                    </ComboBox>-->
                 </Grid>
             </Grid>
             <Grid Grid.Row="5" Background="#FF3E3E42">
