@@ -8,23 +8,28 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml;
 
 namespace TicketSupport
 {
     public static class VersionHelper
     {
-        private const string UPDATER_FILE_NAME = "autoupd.exe";
-        private const string VERSION_FILE_NAME = "ticketsup.version";
+        private const string UPDATER_FILE_NAME = "UpNovaUpd.exe";
+        private const string VERSION_FILE_NAME = "version.xml";
         private static readonly string MainDirSavePath = System.AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly double CurrentVersion = Convert.ToInt32(Assembly.GetExecutingAssembly().GetName().Version.ToString().Replace(".", ""));
         public static void CheckUpdate()
         {
-            Task.Run(() => {
-                if (GetVersion() > Convert.ToInt32(Properties.Settings.Default.Version))
+            Task.Run(() =>
+            {
+                var remoteVersion = GetVersion();
+                if (remoteVersion > CurrentVersion)
                 {
                     Downdload(Properties.Settings.Default.UpdateUrl + UPDATER_FILE_NAME, MainDirSavePath + UPDATER_FILE_NAME);
                     if (File.Exists(UPDATER_FILE_NAME))
                     {
-                        MessageBox.Show("New version exists. Click OK to download a new version.");
+                       MessageBox.Show("Обнаружена новая версия (" + remoteVersion + ")" + Environment.NewLine +
+				"Приложение будет автоматически обновлено и перезапущено.", Assembly.GetExecutingAssembly().ManifestModule.Name + " v" + CurrentVersion, MessageBoxButton.OK, MessageBoxImage.Information);
                         Process.Start(UPDATER_FILE_NAME, Assembly.GetExecutingAssembly().ManifestModule.Name);
                         Application.Current.Shutdown();
                     }
@@ -65,12 +70,13 @@ namespace TicketSupport
             try
             {
                 ClearFiles();
+                var xdoc = new XmlDocument();
                 var request = WebRequest.Create(Properties.Settings.Default.UpdateUrl + VERSION_FILE_NAME) as HttpWebRequest;
-                var response = request.GetResponse() as HttpWebResponse;
-                using (var reader = new StreamReader(response.GetResponseStream()))
+                using (var response = (HttpWebResponse)request.GetResponse())
                 {
-                    return Convert.ToInt32(reader.ReadLine());
+                    xdoc.Load(response.GetResponseStream());
                 }
+                return Convert.ToInt32(xdoc.GetElementsByTagName("TicketSupport")[0].InnerText.Replace(".", ""));
             }
             catch
             {
